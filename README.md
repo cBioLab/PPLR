@@ -42,37 +42,68 @@ Create a working directory (e.g., work) and clone the following repositories.
        cd ..
        cd xbyak
        git checkout c5da3778e7f84013fe8c26fcf18a67881bd1e825
-       cd ../PPLR/src
+       cd ../PPLR/comm
+       mkdir server
+       mkdir client
+       cd ../src
        make
 
 # Prerequisite Files and Libraries for Running Your Application
 	* OpenSSL
 	* GMP (libgmp-dev)
 	
+# Quick start
+
+## Running CLR sample
+	cd ../bin
+	./clr.sh
+
+## Running SLR sample
+	cd ../bin
+	./slr.sh
+	
 # Running CLR
-	precomputation
-	./dataenc [training data file]
+	precomputation (key generation instead of analyst, key distribution, data encryption instead of data providers) 
+	./encdata [training data file]
 
 	@server
-	./clrserver -p [port number]　-c [the number of threads]
+	./clrserver -p [port number] -c [the number of threads]
 	
 	@client
 	./clrclient -h [ip address of server] -p [port number] -i [the number of learning iterations] -l [learning rate] -r [coefficient of L2 norm] -a [accuracy]
 
-* This demonstration shows the execution procedure of CLR after the server receives the encrypted data from the data providers. For convenience, data encryption is executed beforehand and all ciphertexts is on the server.
-* Encrypted data is PPLR/data/encdata.dat. Before running the server, you put this file in PPLR/data/ of the server.
+* This demonstration shows the execution procedure of CLR after the server receives the encrypted data from the data providers. For convenience, key generation, key distribution and data encryption is executed beforehand.
+* Following files are created by precomputation.
+	* Encrypted data : PPLR/data/encdata.dat.
+	* PublicKey data : PPLR/data/pubsample.dat.
+	* SecretKey data : PPLR/data/prvsample.dat.
+* Before running the server, you put Encrypted data and PublicKey data in PPLR/data/ of the server.
+* Before running the client, you put SecretKey data and PublicKey data in PPLR/data/ of the client.
 * If accuracy is *s*, the logistic regression model parameters are calculated with *s* digits after the decimal point.
 
 
 # Running SLR
-		./slrtest -f [training data file]
-		python slr.py [learning rate] [coefficient of L2 norm]
-		
-* File exchange is done locally (server and client run in local machine).	
+	precomputation (key generation instead of analyst, key distribution, data encryption instead of data providers) 
+	./slrdatap -f [training data file]
 
-# Converting from iDASH-sample to training data file and test data file
+	@server
+	./slrserver -p [port number]
+	
+	@client
+	./slrclient -p [port number] -h [ip address of the server]
+	python slr.py [learning rate] [coefficient of L2 norm]
+		
+* This demonstration shows the execution procedure of SLR after the server receives the encrypted data from the data providers. For convenience, key generation, key distribution and data encryption is executed beforehand.
+* Following files are created by precomputation.
+	* Encrypted data : PPLR/data/encdata.dat.
+	* PublicKey data : PPLR/data/slrpub.dat.
+	* SecretKey data : PPLR/data/slrprv.dat.
+* Before running the server, you put Encrypted data and PublicKey data in PPLR/data/ of the server.
+* Before running the client, you put SecretKey data and PublicKey data in PPLR/data/ of the client.	
+
+# Converting from sample-data to training data file and test data file
 		cd PPLR/data
-		python convert.py [iDASH-sample e.g."LR_dataWith100SNP.txt"] [training data file] [test data file]
+		python convert.py [sample data e.g."10-5.csv"] [training data file] [test data file]
 
 # Training data format
  	   	1st line   : The number of data providers
